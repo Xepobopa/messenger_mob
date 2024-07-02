@@ -1,137 +1,14 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React from 'react';
+import { Provider } from 'react-redux';
+import Navigator from './src/navigation/Navigator';
+import store from './src/store/store';
 
-import type { PropsWithChildren } from 'react';
-import React, { useEffect } from 'react';
-import {
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    View,
-    useColorScheme,
-} from 'react-native';
-
-import {
-    Colors,
-    DebugInstructions,
-    Header,
-    LearnMoreLinks,
-    ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-import { io } from 'socket.io-client';
-
-type SectionProps = PropsWithChildren<{
-    title: string;
-}>;
-
-function Section({ children, title }: SectionProps): JSX.Element {
-    const isDarkMode = useColorScheme() === 'dark';
-    return (
-        <View style={styles.sectionContainer}>
-            <Text
-                style={[
-                    styles.sectionTitle,
-                    {
-                        color: isDarkMode ? Colors.white : Colors.black,
-                    },
-                ]}
-            >
-                {title}
-            </Text>
-            <Text
-                style={[
-                    styles.sectionDescription,
-                    {
-                        color: isDarkMode ? Colors.light : Colors.dark,
-                    },
-                ]}
-            >
-                {children}
-            </Text>
-        </View>
-    );
-}
-
-const socket = io('https://nestjsmessengerbackend-production.up.railway.app');
 function App(): JSX.Element {
-    const isDarkMode = useColorScheme() === 'dark';
-
-    const backgroundStyle = {
-        backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-    };
-
-    useEffect(() => {
-        socket
-            .on('connect', () => {
-                console.log('Connected!');
-                socket.emit('test');
-            })
-            .on('error', error => {
-                console.log('Error: ', error);
-            });
-    }, []);
-
     return (
-        <SafeAreaView style={backgroundStyle}>
-            <StatusBar
-                barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-                backgroundColor={backgroundStyle.backgroundColor}
-            />
-            <ScrollView
-                contentInsetAdjustmentBehavior="automatic"
-                style={backgroundStyle}
-            >
-                <Header />
-                <View
-                    style={{
-                        backgroundColor: isDarkMode
-                            ? Colors.black
-                            : Colors.white,
-                    }}
-                >
-                    <Section title="Step One">
-                        Edit <Text style={styles.highlight}>App.tsx</Text> to
-                        change this screen and then come back to see your edits.
-                    </Section>
-                    <Section title="See Your Changes">
-                        <ReloadInstructions />
-                    </Section>
-                    <Section title="Debug">
-                        <DebugInstructions />
-                    </Section>
-                    <Section title="Learn More">
-                        Read the docs to discover what to do next:
-                    </Section>
-                    <LearnMoreLinks />
-                </View>
-            </ScrollView>
-        </SafeAreaView>
+        <Provider store={store}>
+            <Navigator />
+        </Provider>
     );
 }
-
-const styles = StyleSheet.create({
-    sectionContainer: {
-        marginTop: 32,
-        paddingHorizontal: 24,
-    },
-    sectionTitle: {
-        fontSize: 24,
-        fontWeight: '600',
-    },
-    sectionDescription: {
-        marginTop: 8,
-        fontSize: 18,
-        fontWeight: '400',
-    },
-    highlight: {
-        fontWeight: '700',
-    },
-});
 
 export default App;
