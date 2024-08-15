@@ -7,12 +7,13 @@ export const ButtonRound = ({
     Icon,
     onPress,
     size = 100,
+    backgroundColor,
     children,
 }: TButtonRoundProps) => {
     return (
         <TouchableOpacity
             onPress={onPress}
-            style={{ width: size, height: size }}
+            style={{ width: size, height: size, backgroundColor }}
         >
             {children ? (
                 <ImageBackground

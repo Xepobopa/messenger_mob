@@ -1,5 +1,5 @@
-import { TChat } from '@common/types/chat';
+import { Room } from '@common/socket/interface/chat.interface';
 
 export type TChatListProps = {
-    data: Array<TChat>;
+    data: Array<Room>;
 };

@@ -18,6 +18,10 @@ const ChatsStack = () => {
                 name={EScreens.CreateChat}
                 component={ChatsScreens.CreateChat}
             />
+            <Stack.Screen
+                name={EScreens.ChatMain}
+                component={ChatsScreens.Chat}
+            />
         </Stack.Navigator>
     );
 };

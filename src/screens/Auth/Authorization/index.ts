@@ -1,1 +1,1 @@
-export * from './Authorization.tsx'
+export * from './Authorization';

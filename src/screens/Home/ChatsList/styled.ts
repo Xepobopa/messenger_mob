@@ -1,4 +1,4 @@
-import { ImageBackground, View } from 'react-native';
+import { ImageBackground, Text, View } from 'react-native';
 import styled from 'styled-components';
 
 export const MainBackgroundImage = styled(ImageBackground)`
@@ -20,3 +20,10 @@ export const MainBackgroundView = styled(View)`
     align-items: center;
     justify-content: center;
 `;
+
+export const LoadingChatsContainer = styled(View)`
+    width: 100%;
+    height: 300px;
+    justify-content: center;
+    align-items: center;
+`

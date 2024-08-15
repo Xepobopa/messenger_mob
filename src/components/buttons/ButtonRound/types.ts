@@ -1,9 +1,10 @@
 import React from 'react';
-import { ImageSourcePropType } from 'react-native';
+import { ColorValue, ImageSourcePropType } from 'react-native';
 
 export type TButtonRoundProps = {
     onPress: () => void;
     Icon: ImageSourcePropType;
     size: number;
+    backgroundColor?: ColorValue | undefined;
     children?: React.ReactNode;
 };

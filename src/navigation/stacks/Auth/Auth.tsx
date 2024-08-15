@@ -9,7 +9,7 @@ const Stack = createNativeStackNavigator<TAuthStack>();
 
 export const AuthStack = () => {
     return (
-        <Stack.Navigator screenOptions={ScreenNavigationOptions}>
+        <Stack.Navigator screenOptions={ScreenNavigationOptions} initialRouteName={EScreens.AuthRegistration}>
             <Stack.Screen
                 name={EScreens.AuthRegistration}
                 component={AuthScreens.Registration}

@@ -1,10 +1,7 @@
 import { EUserStatus } from '../../types';
 
 export type TUser = {
-    id: string;
-    uuid: string;
-    username: string;
-    real_name: string;
+    nickname: string;
     profile_url: string;
     phone: string;
     email: string;

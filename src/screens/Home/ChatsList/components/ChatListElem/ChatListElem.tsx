@@ -1,7 +1,6 @@
 import React from 'react';
-import { View } from 'react-native';
+import { TouchableHighlight, TouchableOpacity, View } from 'react-native';
 import { Button } from '@components/buttons';
-import { Common } from '@components/common';
 import {
     ElemDateText,
     ElemNameText,
@@ -9,49 +8,60 @@ import {
     NormalText,
 } from './styled';
 import { TChatListElemProps } from './types';
-import { Images } from '@assets/Images';
+import { Images } from '@assets/Images.ts';
+import { Row } from '@components/common';
+import { useNavigation } from '@react-navigation/native';
+import { EScreens } from '@navigation/screens';
 
 export const ChatListElem = ({ chat }: TChatListElemProps) => {
+    const navigation = useNavigation<any>();
+
+    const handleMoveToChat = () => {
+        navigation.navigate(EScreens.ChatMain, { roomUid: chat.uuid });
+    }
+
     return (
-        <MainBackgroundImage source={Images.PanelHalfdown}>
-            <Common.Row
-                style={{
-                    height: 75,
-                    width: '100%',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                }}
-            >
-                <Button.ButtonRound
-                    Icon={Images.ButtonBack}
-                    size={75}
-                    onPress={() =>
-                        console.log('Press back from chats list pressed!')
-                    }
-                />
-
-                {/* <FullNameBlock
-                    firstName={chat.title}
-                    lastName={chat.lastName}
-                /> */}
-                <ElemNameText>{chat.title}</ElemNameText>
-
-                <View style={{ alignSelf: 'flex-end' }}>
-                    <ElemDateText>
-                        {new Date(chat.updated_at).toLocaleTimeString()}
-                    </ElemDateText>
-                </View>
-
-                <Button.ButtonRound
-                    Icon={Images.ButtonUp}
-                    size={70}
-                    onPress={() => console.log('Hello from ', chat.title)}
+        <TouchableOpacity onPress={handleMoveToChat}>
+            <MainBackgroundImage source={Images.PanelHalfdown}>
+                <Row
+                    style={{
+                        height: 75,
+                        width: '100%',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                    }}
                 >
-                    {/* <NormalText>{chat.unreadedMessages}</NormalText> */}
-                    <NormalText>0</NormalText>
-                </Button.ButtonRound>
-            </Common.Row>
-        </MainBackgroundImage>
+                    <Button.ButtonRound
+                        Icon={Images.ButtonBack}
+                        size={75}
+                        onPress={() =>
+                            console.log('Press back from chats list pressed!')
+                        }
+                    />
+
+                    {/* <FullNameBlock
+                        firstName={chat.title}
+                        lastName={chat.lastName}
+                    /> */}
+                    <ElemNameText>{chat.name}</ElemNameText>
+
+                    <View style={{ alignSelf: 'flex-end' }}>
+                        <ElemDateText>
+                            {new Date(chat.updated_at).toLocaleTimeString()}
+                        </ElemDateText>
+                    </View>
+
+                    <Button.ButtonRound
+                        Icon={Images.ButtonUp}
+                        size={70}
+                        onPress={() => console.log('Hello from ', chat.name)}
+                    >
+                        {/* <NormalText>{chat.unreadedMessages}</NormalText> */}
+                        <NormalText>0</NormalText>
+                    </Button.ButtonRound>
+                </Row>
+            </MainBackgroundImage>
+        </TouchableOpacity>
     );
 };
 

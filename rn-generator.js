@@ -124,6 +124,4 @@ if (options.path && options.component) {
             console.log(`✅ ${options.path}/index.ts created successful.`);
         },
     );
-} else {
-    console.error('You must enter --path and --component!');
 }

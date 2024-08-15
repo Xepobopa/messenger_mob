@@ -1,81 +1,64 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
-// import { useAuth } from '@common/hooks/useAuth';
-import { useAuth } from '@common/hooks/useAuth';
-import { Service } from '@common/services';
-import socket from '@common/socket/socket';
-import { TChat } from '@common/types/chat';
 import MainTab from '../../tabs/Main/Main';
 import { ETab } from '../../tabs/tabs';
 import { AuthStack } from '../Auth';
 import { ScreenNavigationOptions } from '../options';
-import { TCheckUserLogIn, TMainStack } from './types';
-import { useDispatch } from 'react-redux';
-import { userSliceActions } from '../../../store/modules/user/reducer';
+import { TMainStack } from './types';
+import { useUserData } from '../../../store/tools';
+// import { useLoad } from '@common/hooks/useLoad';
+import { useAuth } from '@common/hooks/useAuth';
+import { EncryptedStorageService } from '@common/storage/encryptedStorage';
+import { Text, View } from 'react-native';
 
 const Stack = createNativeStackNavigator<TMainStack>();
 
 const MainStack = () => {
-    // const { user } = useTypedSelector(getUserSelector);
-    const dispatch = useDispatch();
-    const { getToken, setUserData } = useAuth();
-    const [isUserAuth, setIsUserAuth] = useState<TCheckUserLogIn>({
-        isAuth: false,
-        isLoading: true,
-    });
+    const { setIsAuthed } = useAuth();
+    const { isAuthed } = useUserData();
+    // const { loadUserAndChats } = useLoad();
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
+    let currentTab;
     useEffect(() => {
-        socket.on('connect', () => {
-            console.log('Connected to the webSocker Server!');
-        });
-    });
-
-    useEffect(() => {
-        getToken().then(async res => {
-            if (res?.password) {
-                console.log('Token found! Navigate to the MainTab.');
-                setIsUserAuth({ isAuth: true, isLoading: false });
-
-                // get all data
-                const userUid = await loadUser();
-                loadChats(userUid);
+        const fetch = async () => {
+            const token = await EncryptedStorageService.getToken();
+            console.log(token);
+            if (token || isAuthed) {
+                // loadUserAndChats();
+                setIsAuthed(true);
+                setIsLoading(false);
+                currentTab = ETab.Main;
             } else {
-                console.log('Failed to retreive token! Please, log in!');
-                setIsUserAuth({ isAuth: false, isLoading: false });
+                setIsLoading(false);
+                currentTab = ETab.Auth;
             }
-        });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        }
 
-    const loadUser = async () => {
-        const user = await Service.UserService.getUserByToken();
-        setUserData(user.data);
+        fetch();
+    }, [isAuthed]);
 
-        console.log('Loaded user => ', user.data);
-
-        return user.data.uuid;
-    };
-
-    // load chats
-    const loadChats = (userUid: string) => {
-        socket.emit('findAllChats', { userUid }, (res: TChat[]) => {
-            console.log('loadChats => ', res);
-            dispatch(userSliceActions.setChats(res));
-        });
-    };
-
-    // const user = true;
-    const currentTab = isUserAuth.isAuth ? ETab.Main : ETab.Auth;
-    return isUserAuth.isLoading ? (
-        <></>
-    ) : (
-        <Stack.Navigator
-            screenOptions={ScreenNavigationOptions}
-            initialRouteName={currentTab}
-        >
-            <Stack.Screen name={ETab.Main} component={MainTab} />
-            <Stack.Screen name={ETab.Auth} component={AuthStack} />
-        </Stack.Navigator>
+    return (
+        isLoading ? (
+            <View 
+                style={{ 
+                    height: '100%', 
+                    width: '100%', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    backgroundColor: 'black' 
+                    }}>
+                <Text style={{ color: 'white', fontSize: 30 }}>Loading</Text>
+            </View>
+        ) : (
+            <Stack.Navigator
+                screenOptions={ScreenNavigationOptions}
+                initialRouteName={currentTab}
+            >
+                <Stack.Screen name={ETab.Main} component={MainTab} />
+                <Stack.Screen name={ETab.Auth} component={AuthStack} />
+            </Stack.Navigator>
+        )
     );
 };
 

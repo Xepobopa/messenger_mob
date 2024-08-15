@@ -2,10 +2,8 @@ import { Service } from '@common/services';
 import React, { useEffect, useState } from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { FormView, Input, MainView, NextButton, Title } from './styled';
-import { Text } from 'react-native';
-import socket from '@common/socket/socket';
+import { Alert, Text } from 'react-native';
 import { useUserData } from '../../../store/tools';
-import { TChat } from '@common/types/chat';
 
 type TItem = {
     label: string;
@@ -23,7 +21,7 @@ export const CreateChat = () => {
         Service.UserService.getAllUsers().then(res =>
             setUsers(
                 res.data.map(user => ({
-                    label: user.username,
+                    label: user.nickname,
                     value: user.uuid,
                 })),
             ),
@@ -31,6 +29,15 @@ export const CreateChat = () => {
     }, []);
 
     const handleCreateChat = () => {
+        if (!user?.uuid) {
+            Alert.alert("Can't create room, because User UUID is not found!");
+            return;
+        }
+        if (!dropdownValue) {
+            Alert.alert("Can't create room, because you didn't pick user!");
+            return;
+        }
+
         const payload = {
             title: chatName,
             members: [dropdownValue, user?.uuid],
@@ -41,9 +48,21 @@ export const CreateChat = () => {
 
         console.log('payload: ', payload);
 
-        socket.emit('createChat', payload, (res: TChat) => {
-            console.log('res => ', res);
-        });
+        Service.ChatService.postCreateRoom({
+            name: chatName,
+            users: [user.uuid, dropdownValue]
+        })
+        .then(res => {
+            console.log(res.data);
+            Alert.alert(`Chat ${chatName} created successful`);
+        })
+        .catch(e => {
+            console.log({...e});
+            console.log(e.response);
+        })
+        // socket.emit('join-room', payload, (res: TChat) => {
+        //     console.log('res => ', res);
+        // });
     };
 
     // const toggleDropdown = () => {

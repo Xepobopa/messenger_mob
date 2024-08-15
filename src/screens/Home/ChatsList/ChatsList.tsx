@@ -1,28 +1,30 @@
-import { Images } from '@assets/index';
+import { Images } from '@assets/Images.ts';
 import { useAuth } from '@common/hooks/useAuth';
 import { Button } from '@components/buttons';
-import { Common } from '@components/common';
 import { Position } from '@components/positions';
 import { ETab } from '@navigation/tabs';
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Text, TouchableOpacity } from 'react-native';
 import { useUserData } from '../../../store/tools';
 import { ChatsList as ChatsListComponent } from './components/ChatsList';
-import { MainBackgroundImage } from './styled';
+import { LoadingChatsContainer, MainBackgroundImage } from './styled';
+import { Row } from '@components/common';
+import { useLoad } from '@common/hooks/useLoad';
 
 export const ChatsList = () => {
     const { clearToken, clearUserData } = useAuth();
-    const { chats } = useUserData();
     const navigation = useNavigation<any>();
+    const { loadUserAndChats } = useLoad();
+    const { chats } = useUserData();
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
-    console.log('chats => ', chats);
+    useEffect(() => {
+        loadUserAndChats().then(() => console.log('user and chats loaded')).finally(() => setIsLoading(false));
+    }, []);
 
     // TODO: Remove it
     const handleLogIn = () => {
-        clearToken();
-        clearUserData();
-
         navigation.navigate(ETab.Auth);
     };
 
@@ -39,13 +41,19 @@ export const ChatsList = () => {
                     onPress={handleLogIn}
                 />
 
-                <ChatsListComponent data={chats} />
+                {isLoading ? (
+                        <LoadingChatsContainer>
+                            <ActivityIndicator size={'large'} color={'#fff'} />
+                        </LoadingChatsContainer>
+                    ) : ( 
+                        <ChatsListComponent data={chats} />
+                    )}
 
                 <TouchableOpacity onPress={handleCreateChat}>
                     <Text style={{ color: 'white' }}>Create chat</Text>
                 </TouchableOpacity>
 
-                <Common.Row style={{ paddingLeft: 20, paddingRight: 20 }}>
+                <Row style={{ paddingLeft: 20, paddingRight: 20 }}>
                     <Button.ButtonRound
                         Icon={Images.SmallBlueButton}
                         size={70}
@@ -66,7 +74,7 @@ export const ChatsList = () => {
                         size={70}
                         onPress={() => console.log('Press button row #4')}
                     />
-                </Common.Row>
+                </Row>
             </Position.Main>
 
             <Position.Footer>

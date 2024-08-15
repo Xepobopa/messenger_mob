@@ -1,22 +1,21 @@
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { userSliceActions } from '../../../store/modules/user/reducer';
-import * as Keychain from 'react-native-keychain';
 import { TUser } from '@common/types/user';
+import { EncryptedStorageService } from '@common/storage/encryptedStorage';
+import { Room } from '@common/socket/interface/chat.interface';
 
 export const useAuth = () => {
     const dispatch = useDispatch();
 
     const setToken = async (token: string) => {
-        Keychain.setGenericPassword('token', token).catch(err =>
-            console.log('[ERROR] Failed to store token in Keychain. ', err),
-        );
-        console.log(`token ${token} saved successful!`);
+        EncryptedStorageService.setToken(token);
+        console.log(`token saved successful!`);
     };
 
     const getToken = async () => {
         try {
-            const token = await Keychain.getGenericPassword();
+            const token = await EncryptedStorageService.getToken();
             if (!token) {
                 return null;
             }
@@ -30,7 +29,7 @@ export const useAuth = () => {
     const clearToken = async () => {
         try {
             console.log('Token deleted');
-            return await Keychain.resetGenericPassword();
+            return await EncryptedStorageService.setToken('');
         } catch (error) {
             console.error(
                 'Error deleting credentials for service Token',
@@ -46,10 +45,22 @@ export const useAuth = () => {
         [dispatch],
     );
 
+    const setChats = useCallback(
+        (chats: Array<Room>) => {
+            if (chats === undefined) chats = [];
+            dispatch(userSliceActions.setChats(chats));
+        },
+        [dispatch],
+    );
+
     const clearUserData = useCallback(() => {
         console.log('User data deleted');
         dispatch(userSliceActions.clearUser());
     }, [dispatch]);
 
-    return { setUserData, clearUserData, setToken, getToken, clearToken };
+    const setIsAuthed = useCallback((state: boolean) => {
+        dispatch(userSliceActions.setIsAuthed(state));
+    }, [dispatch]);
+
+    return { setUserData, clearUserData, setToken, getToken, clearToken, setIsAuthed, setChats };
 };

@@ -1,15 +1,20 @@
+import { Asset } from 'react-native-image-picker';
 import { TBasicDataResponse, TRequest } from '../../types';
 import { TUser } from './common';
 
 export type TPostUserSignUpRequest = TRequest<TPayload, TResponse>;
 
 type TPayload = {
-    username: string;
-    real_name: string;
+    nickname: string;
     phone: string;
     email: string;
     password: string;
-    avatar: string;
+    confirmPassword: string;
+    avatar: Asset | null;
 };
 
-type TResponse = TUser & TBasicDataResponse;
+type TResponse = {
+    success: boolean,
+    message: string,
+    user: TUser
+};
