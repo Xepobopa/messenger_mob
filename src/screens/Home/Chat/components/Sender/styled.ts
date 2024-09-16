@@ -26,7 +26,7 @@ export const SenderContainer = styled(View)`
 `;
 
 export const StyledInput = styled(TextInput)`
-  height: 40px;
+  height: 50px;
   width: 85%;
   background-color: #17212b;
   padding: 0 20px;

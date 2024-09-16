@@ -7,7 +7,7 @@ import {
   StyledInput,
 } from './styled.ts';
 import { Images } from '@assets/Images.ts';
-import { Image, Keyboard } from 'react-native';
+import { Image, Keyboard, Platform } from 'react-native';
 
 export const Sender = ({ onSend }: TSenderProps) => {
   const [text, setText] = useState<string>('');
@@ -17,13 +17,17 @@ export const Sender = ({ onSend }: TSenderProps) => {
   };
 
   const handleSend = () => {
-    setText('');
-    onSend(text);
-    Keyboard.dismiss();
+    if (text.trim().length > 0) { // Проверяем, что сообщение не пустое
+      onSend(text);
+      setText('');
+      Keyboard.dismiss();
+    }
   };
 
   return (
-    <MainView behavior="position">
+    <MainView
+      behavior={Platform.OS === 'ios' || 'android' ? 'padding' : 'height'}
+    >
       <SenderContainer>
         <StyledInput
           value={text}
