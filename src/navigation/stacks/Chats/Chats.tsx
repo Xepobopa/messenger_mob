@@ -8,22 +8,19 @@ import { ChatsScreens } from '../../../screens/Home';
 const Stack = createNativeStackNavigator<TChatsStack>();
 
 const ChatsStack = () => {
-    return (
-        <Stack.Navigator screenOptions={ScreenNavigationOptions}>
-            <Stack.Screen
-                name={EScreens.ChatsList}
-                component={ChatsScreens.ChatsList}
-            />
-            <Stack.Screen
-                name={EScreens.CreateChat}
-                component={ChatsScreens.CreateChat}
-            />
-            <Stack.Screen
-                name={EScreens.ChatMain}
-                component={ChatsScreens.Chat}
-            />
-        </Stack.Navigator>
-    );
+  return (
+    <Stack.Navigator screenOptions={ScreenNavigationOptions}>
+      <Stack.Screen
+        name={EScreens.ChatsList}
+        component={ChatsScreens.ChatsList}
+      />
+      <Stack.Screen
+        name={EScreens.CreateChat}
+        component={ChatsScreens.CreateChat}
+      />
+      <Stack.Screen name={EScreens.ChatMain} component={ChatsScreens.Chat} />
+    </Stack.Navigator>
+  );
 };
 
 export default ChatsStack;

@@ -1,3 +1,3 @@
 export type TSenderProps = {
-    onSend: (message: string) => void;
+  onSend: (message: string) => void;
 };

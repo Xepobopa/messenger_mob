@@ -5,21 +5,21 @@ import store from './src/store/store';
 import socket from '@common/socket/connection';
 
 function App(): JSX.Element {
+  useEffect(() => {
+    socket
+      .on('connect', () => {
+        console.log('Successful connection to the server via socket!');
+      })
+      .on('disconnect', () => {
+        console.log('Socket disconnection from server!');
+      });
+  }, []);
 
-    useEffect(() => {
-        socket.on('connect', () => {
-            console.log('Successful connection to the server via socket!');
-        })
-        .on('disconnect', () => {
-            console.log('Socket disconnection from server!');
-        })
-    }, []);
-
-    return (
-        <Provider store={store}>
-            <Navigator />
-        </Provider>
-    );
+  return (
+    <Provider store={store}>
+      <Navigator />
+    </Provider>
+  );
 }
 
 export default App;

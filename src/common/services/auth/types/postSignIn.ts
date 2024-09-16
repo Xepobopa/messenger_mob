@@ -5,11 +5,11 @@ import { TUser } from './common';
 export type TPostUserSignInRequest = TRequest<TPayload, TResponse>;
 
 type TPayload = {
-    nickname: string;
-    password: string;
+  nickname: string;
+  password: string;
 };
 
 type TResponse = {
-    user: TUser & TAbstract;
-    accessToken: string;
+  user: TUser & TAbstract;
+  accessToken: string;
 };

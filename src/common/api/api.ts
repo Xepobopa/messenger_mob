@@ -2,44 +2,44 @@ import axios from 'axios';
 import { HOST } from '@env';
 import { EncryptedStorageService } from '@common/storage/encryptedStorage';
 
-console.log("HOST => ", HOST);
+console.log('HOST => ', HOST);
 // 10.0.2.2 - for Android  ;  localhost - default
 const privateInstance = axios.create({
-    baseURL: HOST, //'https://nestjsmessengerbackend-production.up.railway.app', // HOST
-    withCredentials: true,
-    headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Credentials': true,
-    },
+  baseURL: HOST, //'https://nestjsmessengerbackend-production.up.railway.app', // HOST
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Credentials': true,
+  },
 });
 
 const publicInstance = axios.create({
-    baseURL: HOST,
-    withCredentials: true,
-    headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Credentials': 'true',
-    },
+  baseURL: HOST,
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Credentials': 'true',
+  },
 });
 
 privateInstance.interceptors.request.use(
-    async config => {
-        console.log(`${config.baseURL}${config.url}`);
+  async (config) => {
+    console.log(`${config.baseURL}${config.url}`);
 
-        const token = await EncryptedStorageService.getToken();
-        // const accessToken = await AsyncStorageService.getAccessToken();
-        // const refreshToken = await AsyncStorageService.getRefreshToken();
+    const token = await EncryptedStorageService.getToken();
+    // const accessToken = await AsyncStorageService.getAccessToken();
+    // const refreshToken = await AsyncStorageService.getRefreshToken();
 
-        if (token && config.headers) {
-            config.headers.Authorization = 'Bearer ' + token;
-        }
-        // config.headers['Cookie'] = `refreshToken=${refreshToken}`;
+    if (token && config.headers) {
+      config.headers.Authorization = 'Bearer ' + token;
+    }
+    // config.headers['Cookie'] = `refreshToken=${refreshToken}`;
 
-        return config;
-    },
-    error => Promise.reject(error),
+    return config;
+  },
+  (error) => Promise.reject(error)
 );
 
 // privateInstance.interceptors.response.use(
