@@ -9,7 +9,7 @@ export const MessageContainer = styled(View)<{ $type: 'my' | 'other' }>`
   margin: 5px 0;
   border-radius: 15px;
   background-color: ${(props) =>
-    props.$type === 'my' ? '#3390ec' : '#2a2f33'}; /* Цвета фонов сообщений */
+    props.$type === 'my' ? '#2b5278' : '#182533'}; /* Цвета фонов сообщений */
   border-bottom-right-radius: ${(props) =>
     props.$type === 'my' ? '0' : '15px'};
   border-bottom-left-radius: ${(props) =>
@@ -20,7 +20,7 @@ export const MessageContainer = styled(View)<{ $type: 'my' | 'other' }>`
 export const Triangle = styled(View)<{ $type: 'my' | 'other' }>`
   position: absolute;
   bottom: 0; /* Положение чуть ниже нижнего края */
-  ${(props) => (props.$type === 'my' ? 'right: 5px;' : 'left: 5px;')}; /* Положение справа или слева */
+  ${(props) => (props.$type === 'my' ? 'right: 5px;' : 'left: 5px;')}; 
   width: 0;
   height: 0;
   border-style: solid;
@@ -29,12 +29,12 @@ export const Triangle = styled(View)<{ $type: 'my' | 'other' }>`
   ${(props) =>
     props.$type === 'my'
       ? `
-    border-bottom-color: #3390ec; /* Цвет треугольника для отправленных сообщений */
-    border-left-width: 0; /* Убираем левую границу */
-    border-right-width: 8px; /* Устанавливаем правую границу */
+    border-bottom-color: #2b5278; 
+    border-left-width: 0; 
+    border-right-width: 8px; 
     `
       : `
-    border-bottom-color: #2a2f33; /* Цвет треугольника для полученных сообщений */
+    border-bottom-color: #182533; /* Цвет треугольника для полученных сообщений */
     border-right-width: 0; /* Убираем правую границу */
     border-left-width: 8px; /* Устанавливаем левую границу */
     `};
@@ -45,7 +45,7 @@ export const MessageInfo = styled(Text)<{ $type: 'my' | 'other' }>`
   position: absolute; /* Абсолютное позиционирование */
   bottom: 5px; /* Отступ снизу */
   right: 10px; /* Отступ справа */
-  color: ${(props) => (props.$type === 'my' ? '#d1e7ff' : '#9daab6')}; /* Цвет времени */
+  color: ${(props) => (props.$type === 'my' ? '#7da8d3' : '#6b7d8c')}; /* Цвет времени */
 `;
 // Оставляем MessageText как есть
 export const MessageText = styled(Text)`
