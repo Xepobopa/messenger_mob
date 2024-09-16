@@ -5,7 +5,7 @@ export const StyledScrollView = styled(ScrollView)`
   display: flex;
   flex-direction: column;
   background-color: #0e1621;
-  padding: 0 10px;
+  padding: 10px;
   height: 80%;
   width: 100%;
 `;
