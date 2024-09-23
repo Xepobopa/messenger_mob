@@ -41,15 +41,19 @@ export const Triangle = styled(View)<{ $type: 'my' | 'other' }>`
 `;
 
 export const MessageInfo = styled(Text)<{ $type: 'my' | 'other' }>`
+
   font-size: 12px; /* Размер шрифта */
   position: absolute; /* Абсолютное позиционирование */
   bottom: 5px; /* Отступ снизу */
   right: 10px; /* Отступ справа */
-  color: ${(props) => (props.$type === 'my' ? '#7da8d3' : '#6b7d8c')}; /* Цвет времени */
+  color: ${(props) =>
+    props.$type === 'my' ? '#7da8d3' : '#6b7d8c'}; /* Цвет времени */
 `;
 // Оставляем MessageText как есть
 export const MessageText = styled(Text)`
   font-size: 16px;
   color: #e1e1e1; /* Светлый цвет текста */
   margin-bottom: 15px; /* Добавляем отступ снизу для времени */
+  
 `;
+
