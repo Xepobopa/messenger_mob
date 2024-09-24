@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableHighlight, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View, Image } from 'react-native';
 import { Button } from '@components/buttons';
 import {
   ElemDateText,
@@ -12,6 +12,7 @@ import { Images } from '@assets/Images.ts';
 import { Row } from '@components/common';
 import { useNavigation } from '@react-navigation/native';
 import { EScreens } from '@navigation/screens';
+import ProfileDefaultIcon from '@assets/icons/ProfileDefault/ProfileDefaultIcon';
 
 export const ChatListElem = ({ chat }: TChatListElemProps) => {
   const navigation = useNavigation<any>();
@@ -22,57 +23,84 @@ export const ChatListElem = ({ chat }: TChatListElemProps) => {
 
   return (
     <TouchableOpacity onPress={handleMoveToChat}>
-      <MainBackgroundImage source={Images.PanelHalfdown}>
         <Row
           style={{
             height: 75,
-            width: '100%',
             alignItems: 'center',
             justifyContent: 'space-between',
+            paddingVertical: 10,
           }}
-        >
-          <Button.ButtonRound
-            Icon={Images.ButtonBack}
-            size={75}
-            onPress={() => console.log('Press back from chats list pressed!')}
+      >
+        {/* Проверяем наличие аватарки, если её нет, используем SVG по умолчанию */}
+        {chat.avatarUrl ? (
+          <Image
+            source={{ uri: chat.avatarUrl }} // URL для аватара чата
+            style={{
+              width: 50,
+              height: 50,
+              borderRadius: 25,
+              marginRight: 10,
+            }}
           />
-
-          {/* <FullNameBlock
-                        firstName={chat.title}
-                        lastName={chat.lastName}
-                    /> */}
-          <ElemNameText>{chat.name}</ElemNameText>
-
-          <View style={{ alignSelf: 'flex-end' }}>
-            <ElemDateText>
-              {new Date(chat.updated_at).toLocaleTimeString()}
-            </ElemDateText>
-          </View>
-
-          <Button.ButtonRound
-            Icon={Images.ButtonUp}
-            size={70}
-            onPress={() => console.log('Hello from ', chat.name)}
+        ) : (
+          <View
+            style={{
+              width: 50,
+              height: 50,
+              borderRadius: 25,
+              marginRight: 10,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
           >
-            {/* <NormalText>{chat.unreadedMessages}</NormalText> */}
-            <NormalText>0</NormalText>
-          </Button.ButtonRound>
-        </Row>
-      </MainBackgroundImage>
+            <ProfileDefaultIcon width={50} height={50} />
+          </View>
+        )}
+
+        {/* Название чата и последнее сообщение */}
+        <View style={{ flex: 1, marginLeft: 10 }}>
+          <ElemNameText>{chat.name}</ElemNameText>
+          <NormalText numberOfLines={1} style={{ color: '#7d8b97' }}>
+            {chat.lastMessage}
+          </NormalText>
+        </View>
+
+        {/* Время последнего сообщения и количество непрочитанных сообщений */}
+        <View style={{ alignItems: 'flex-end' }}>
+          <ElemDateText>
+            {new Date(chat.updated_at).toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+            })}
+          </ElemDateText>
+          {chat.unreadedMessages > 0 && (
+            <View
+              style={{
+                backgroundColor: '#007aff',
+                borderRadius: 10,
+                padding: 5,
+                marginTop: 5,
+              }}
+            >
+              <NormalText style={{ color: '#fff' }}>
+                {chat.unreadedMessages}
+              </NormalText>
+            </View>
+          )}
+        </View>
+      </Row>
+      <View
+        style={{
+
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginLeft: 50,
+              borderBottomWidth: 1,
+              borderBottomColor: '#00000', // Цвет линии
+              // Линия начинается с конца изображения
+            }}
+      />
     </TouchableOpacity>
   );
 };
-
-// type TFullNameBlockProps = {
-//     firstName: string;
-//     lastName: string;
-// };
-
-// const FullNameBlock = ({ firstName, lastName }: TFullNameBlockProps) => {
-//     return (
-//         <View>
-//             <ElemNameText>{firstName}</ElemNameText>
-//             <ElemNameText>{lastName}</ElemNameText>
-//         </View>
-//     );
-// };

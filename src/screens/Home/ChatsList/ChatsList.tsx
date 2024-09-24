@@ -17,6 +17,7 @@ import { ChatsList as ChatsListComponent } from './components/ChatsList';
 import { LoadingChatsContainer, MainBackgroundImage } from './styled';
 import { Row } from '@components/common';
 import { useLoad } from '@common/hooks/useLoad';
+import RoundButton from '@components/common/telegramStaff/RoundButton/RoundButton';
 
 export const ChatsList = () => {
   const { clearToken, clearUserData } = useAuth();
@@ -52,36 +53,37 @@ export const ChatsList = () => {
   };
 
   return (
-    <MainBackgroundImage source={Images.ScreenBackground}>
-      <Position.Main style={{ justifyContent: 'space-around' }}>
-        <Button.ButtonRound
-          Icon={Images.ArrowBack}
-          size={35}
-          onPress={handleLogIn}
-        />
+    <MainBackgroundImage>
+      <Button.ButtonRound
+        Icon={Images.ArrowBack}
+        size={35}
+        onPress={handleLogIn}
+      />
 
-        {isLoading ? (
-          <LoadingChatsContainer>
-            <ActivityIndicator size={'large'} color={'#fff'} />
-          </LoadingChatsContainer>
-        ) : (
-          <ScrollView
-            refreshControl={
-              <RefreshControl
-                refreshing={isRefreshing}
-                onRefresh={refreshChats}
-              />
-            }
-          >
-            <ChatsListComponent data={chats} />
-          </ScrollView>
-        )}
+      {isLoading ? (
+        <LoadingChatsContainer>
+          <ActivityIndicator size={'large'} color={'#fff'} />
+        </LoadingChatsContainer>
+      ) : (
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={refreshChats}
+            />
+          }
+          contentContainerStyle={{ flexGrow: 1 }}
+        >
+          <ChatsListComponent data={chats} />
+        </ScrollView>
+      )}
 
-        <TouchableOpacity onPress={handleCreateChat}>
-          <Text style={{ color: 'white' }}>Create chat</Text>
-        </TouchableOpacity>
+      
+      <TouchableOpacity onPress={handleCreateChat}>
+        <Text style={{ color: 'white' }}>Create chat</Text>
+      </TouchableOpacity>
 
-        <Row style={{ paddingLeft: 20, paddingRight: 20 }}>
+      {/* <Row style={{ paddingLeft: 20, paddingRight: 20 }}>
           <Button.ButtonRound
             Icon={Images.SmallBlueButton}
             size={70}
@@ -102,16 +104,15 @@ export const ChatsList = () => {
             size={70}
             onPress={() => console.log('Press button row #4')}
           />
-        </Row>
-      </Position.Main>
+        </Row> */}
 
-      <Position.Footer>
+      {/* <Position.Footer>
         <Button.ButtonRound
           Icon={Images.ButtonUp}
           size={70}
           onPress={() => console.log('Press button up')}
         />
-      </Position.Footer>
+      </Position.Footer> */}
     </MainBackgroundImage>
   );
 };

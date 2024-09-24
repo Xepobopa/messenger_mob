@@ -6,9 +6,10 @@ export const MainBackgroundImage = styled(ImageBackground)`
 `;
 
 export const ElemNameText = styled(Text)`
-  font-size: 22px;
+  font-size: 18px;
   color: white;
   font-weight: 400;
+  margin-top: 10px;
 `;
 
 export const ElemDateText = styled(Text)`
@@ -16,7 +17,7 @@ export const ElemDateText = styled(Text)`
   color: white;
   font-weight: 300;
   align-self: flex-end;
-  padding-bottom: 5px;
+  
 `;
 
 export const NormalText = styled(Text)`
