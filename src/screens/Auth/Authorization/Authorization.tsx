@@ -31,16 +31,26 @@ export const Authorization = () => {
     })
       .then((res) => {
         setIsLoading(false);
-        console.log(res.data);
-        // save all data
-        EncryptedStorageService.setToken(res.data.accessToken);
-        setUserData(res.data.user);
-        setIsAuthed(true);
 
-        navigate.navigate(ETab.Main);
+        // Проверьте, что res содержит данные
+        console.log('Response:', res);
+
+        if (res && res.data) {
+          console.log('Response data:', res.data);
+
+          // save all data
+          EncryptedStorageService.setToken(res.data.tokens.accessToken);
+          console.log('AccessToken:', res.data.tokens.accessToken);
+
+          setUserData(res.data.user);
+          setIsAuthed(true);
+          navigate.navigate(ETab.Main);
+        } else {
+          console.error('Response data is undefined or null');
+        }
       })
       .catch((e) => {
-        console.log({ ...e });
+        console.log('Error:', e);
         setIsLoading(false);
       });
   };
