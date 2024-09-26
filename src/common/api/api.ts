@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { HOST } from '@env';
-import { EncryptedStorageService } from '@common/storage/encryptedStorage';
+import {HOST} from '@env';
+import {EncryptedStorageService} from '@common/storage/encryptedStorage';
 
 console.log('HOST => ', HOST);
 // 10.0.2.2 - for Android  ;  localhost - default
@@ -25,21 +25,19 @@ const publicInstance = axios.create({
 });
 
 privateInstance.interceptors.request.use(
-  async (config) => {
+  async config => {
     console.log(`${config.baseURL}${config.url}`);
 
     const token = await EncryptedStorageService.getToken();
-    // const accessToken = await AsyncStorageService.getAccessToken();
-    // const refreshToken = await AsyncStorageService.getRefreshToken();
+    console.log('Retrieved token:', token);
 
     if (token && config.headers) {
       config.headers.Authorization = 'Bearer ' + token;
     }
-    // config.headers['Cookie'] = `refreshToken=${refreshToken}`;
 
     return config;
   },
-  (error) => Promise.reject(error)
+  error => Promise.reject(error),
 );
 
 // privateInstance.interceptors.response.use(

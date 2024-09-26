@@ -14,10 +14,11 @@ export const ElemNameText = styled(Text)`
 
 export const ElemDateText = styled(Text)`
   font-size: 14px;
-  color: white;
+  color: #6c7581;
   font-weight: 300;
   align-self: flex-end;
-  
+  flex: 1;
+  margin-top: 8px;
 `;
 
 export const NormalText = styled(Text)`

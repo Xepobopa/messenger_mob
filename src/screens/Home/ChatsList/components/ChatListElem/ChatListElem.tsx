@@ -28,7 +28,8 @@ export const ChatListElem = ({ chat }: TChatListElemProps) => {
             height: 75,
             alignItems: 'center',
             justifyContent: 'space-between',
-            paddingVertical: 10,
+            paddingVertical: 5,
+            paddingHorizontal: 10,
           }}
       >
         {/* Проверяем наличие аватарки, если её нет, используем SVG по умолчанию */}
@@ -95,9 +96,9 @@ export const ChatListElem = ({ chat }: TChatListElemProps) => {
 
               alignItems: 'center',
               justifyContent: 'space-between',
-              marginLeft: 50,
-              borderBottomWidth: 1,
-              borderBottomColor: '#00000', // Цвет линии
+              marginLeft: 60,
+              borderBottomWidth: 2,
+              borderBottomColor: '#16202c', // Цвет линии
               // Линия начинается с конца изображения
             }}
       />
