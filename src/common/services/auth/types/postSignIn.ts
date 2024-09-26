@@ -10,6 +10,10 @@ type TPayload = {
 };
 
 type TResponse = {
+  tokens: {
+    accessToken: string;
+    refreshToken: string;
+  };
   user: TUser & TAbstract;
   accessToken: string;
 };
