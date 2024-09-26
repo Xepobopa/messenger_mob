@@ -1,16 +1,21 @@
-import { apiPrivate } from '../../api';
+import { apiFormData, apiPrivate } from '../../api';
 import { TGetMessages } from './types/getMessages';
 import { TGetRoomInfo } from './types/getRoomInfo';
 import { TPostCreateRoom } from './types/postCreateRoom';
 import { TPostSendMessageRequest } from './types/postSendMessage';
+ 
 
 export class ChatService {
   static async postCreateRoom(
-    data: TPostCreateRoom['payload']
+    data: FormData // Ensure this is of type FormData
   ): Promise<TPostCreateRoom['response']> {
-    return apiPrivate.post('/chat/create-room', data);
+    return apiFormData.post('/chat/create-room', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
   }
-
+  
   static async getRoomInfo(
     data: TGetRoomInfo['payload']
   ): Promise<TGetRoomInfo['response']> {

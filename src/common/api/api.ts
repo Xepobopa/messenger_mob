@@ -1,73 +1,69 @@
 import axios from 'axios';
-import {HOST} from '@env';
-import {EncryptedStorageService} from '@common/storage/encryptedStorage';
+import { HOST } from '@env';
+import { EncryptedStorageService } from '@common/storage/encryptedStorage';
 
 console.log('HOST => ', HOST);
-// 10.0.2.2 - for Android  ;  localhost - default
-const privateInstance = axios.create({
-  baseURL: HOST, //'https://nestjsmessengerbackend-production.up.railway.app', // HOST
-  withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Credentials': true,
-  },
-});
 
-const publicInstance = axios.create({
+const privateInstance = axios.create({
   baseURL: HOST,
   withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Credentials': 'true',
-  },
 });
 
-privateInstance.interceptors.request.use(
-  async config => {
-    console.log(`${config.baseURL}${config.url}`);
+const formDataInstance = axios.create({
+  baseURL: HOST,
+  withCredentials: false,
+  // Let Axios handle the correct headers for FormData automatically
+});
 
-    const token = await EncryptedStorageService.getToken();
-    console.log('Retrieved token:', token);
+// Interceptor to handle Authorization header
+const setAuthToken = async (config) => {
+  const token = await EncryptedStorageService.getToken();
+  console.log('Retrieved token:', token);
+  if (token && config.headers) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+};
 
-    if (token && config.headers) {
-      config.headers.Authorization = 'Bearer ' + token;
-    }
+privateInstance.interceptors.request.use(setAuthToken);
+formDataInstance.interceptors.request.use(setAuthToken);
 
-    return config;
+formDataInstance.interceptors.response.use(
+  (response) => {
+    console.log(
+      `Response: ${response.status} ${response.config.url}`,
+      response.data
+    );
+    return response;
   },
-  error => Promise.reject(error),
+  (error) => {
+    console.error('Response Error:', error.response || error.message);
+    return Promise.reject(error);
+  }
 );
 
-// privateInstance.interceptors.response.use(
-//     value => value,
-//     async error => {
-//         if (axios.isAxiosError(error)) {
-//             if (error.request.status === 404 || error.request.status === 401) {
-//                 console.log(
-//                     'Access token is old. We need to get a new one and set it',
-//                 );
-//                 // access token is old. We need to get a new one and set it
-//                 // try {
-//                 //     // set new token
-//                 //     const res = await Service.AuthService.refreshToken();
-//                 //     await AsyncStorageService.setAccessToken(res.data.accessToken);
+formDataInstance.interceptors.request.use((request) => {
+  console.log('Starting Request', request);
+  return request;
+});
 
-//                 //     // resend old request and return it
-//                 //     const config = { ...error.config, headers: { Authorization: `Bearer ${res.data.accessToken}` } };
-//                 //     return await privateInstance(config);
+formDataInstance.interceptors.response.use(
+  (response) => {
+    console.log(
+      `Response: ${response.status} ${response.config.url}`,
+      response.data
+    );
+    return response;
+  },
+  (error) => {
+    if (error.response) {
+      console.error('Response Error:', error.response.data);
+    } else {
+      console.error('Request Error:', error.message);
+    }
+    return Promise.reject(error);
+  }
+);
 
-//                 // } catch (e) {
-//                 //     console.error('Token refresh failed:', e);
-//                 //     Promise.reject('Token refresh failed. Log out from your account and sign in.');
-//                 // }
-//             }
-//         }
-//         console.log(error.response);
-//         Promise.reject(error);
-//     },
-// );
-
-export const apiPublic = publicInstance;
 export const apiPrivate = privateInstance;
+export const apiFormData = formDataInstance;

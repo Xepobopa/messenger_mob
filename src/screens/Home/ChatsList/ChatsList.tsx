@@ -21,8 +21,11 @@ import { useLoad } from '@common/hooks/useLoad';
 import RoundButton from '@components/telegramStaff/RoundButton/RoundButton';
 import MenuIcon from '@assets/icons/Menu/MenuIcon';
 import PencilIcon from '@assets/icons/Pencil/PencilIcon';
+import useSocketEvents from '@common/hooks/useSocketEvents/useSocketEvents';
 
 export const ChatsList = () => {
+  useSocketEvents(); // Use the custom hook to listen to socket events
+
   const { clearToken, clearUserData } = useAuth();
   const navigation = useNavigation<any>();
   const { loadUserAndChats } = useLoad();
@@ -30,23 +33,29 @@ export const ChatsList = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
-  // Функция для обновления списка чатов
-  const refreshChats = useCallback(() => {
-    if (isRefreshing) return; // Предотвращаем повторное обновление
-    setIsRefreshing(true); // Устанавливаем состояние рефреша в true
-    loadUserAndChats()
-      .then(() => console.log('user and chats loaded'))
-      .finally(() => setIsRefreshing(false)); // Устанавливаем состояние рефреша в false
-  }, [isRefreshing, loadUserAndChats]);
-
+  // Initial loading effect - only runs once when component is mounted
   useEffect(() => {
-    if (!isLoading) return; // Если уже загружается, то выходим из эффекта
-    loadUserAndChats()
-      .then(() => console.log('user and chats loaded'))
-      .finally(() => setIsLoading(false)); // Скрываем индикатор загрузки после завершения загрузки
+    const loadData = async () => {
+      if (!isLoading) return; // Prevent multiple loading
+      try {
+        await loadUserAndChats();
+        console.log('user and chats loaded');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
   }, [isLoading, loadUserAndChats]);
 
-  // TODO: Remove it
+  const refreshChats = useCallback(() => {
+    if (isRefreshing) return;
+    setIsRefreshing(true);
+    loadUserAndChats()
+      .then(() => console.log('user and chats refreshed'))
+      .finally(() => setIsRefreshing(false));
+  }, [isRefreshing, loadUserAndChats]);
+
   const handleLogIn = () => {
     navigation.navigate(ETab.Auth);
   };
@@ -57,25 +66,20 @@ export const ChatsList = () => {
 
   return (
     <MainBackgroundImage>
+      
       <Row
         style={{
           alignItems: 'center',
           height: 50,
           backgroundColor: '#222e3e',
-          shadowColor: '#000', // Цвет тени
-          shadowOffset: { width: 0, height: 50 }, // Смещение тени
-          shadowOpacity: 0.25, // Прозрачность тени
-          shadowRadius: 5.84, // Радиус тени
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 50 },
+          shadowOpacity: 0.25,
+          shadowRadius: 5.84,
         }}
       >
-        {/* <Button.ButtonRound Icon={MenuIcon} size={35} onPress={handleLogIn} /> */}
-        <TouchableOpacity
-          onPress={handleLogIn}
-          style={{
-            marginLeft: 20,
-          }}
-        >
-          <MenuIcon></MenuIcon>
+        <TouchableOpacity onPress={handleLogIn} style={{ marginLeft: 20 }}>
+          <MenuIcon />
         </TouchableOpacity>
         <Text
           style={{
@@ -86,10 +90,9 @@ export const ChatsList = () => {
             textAlign: 'center',
           }}
         >
-          сообщения
+          Сообщения
         </Text>
         <View style={{ width: 35 }} />
-        {/* Добавляем пустое пространство, чтобы выровнять с кнопкой назад */}
       </Row>
 
       {isLoading ? (
@@ -110,17 +113,7 @@ export const ChatsList = () => {
         </ScrollView>
       )}
 
-      {/* <TouchableOpacity onPress={handleCreateChat}>
-        <Text style={{ color: 'white' }}>Create chat</Text>
-      </TouchableOpacity> */}
-      <View
-        style={{
-          position: 'absolute',
-          bottom: 20, // отступ от нижнего края экрана
-          right: 20, // отступ от правого края экрана
-          zIndex: 10, // высокий zIndex для отображения поверх других элементов
-        }}
-      >
+      <View style={{ position: 'absolute', bottom: 20, right: 20, zIndex: 10 }}>
         <RoundButton
           Icon={PencilIcon}
           size={50}
@@ -129,37 +122,6 @@ export const ChatsList = () => {
           iconColor="#ffffff"
         />
       </View>
-
-      {/* <Row style={{ paddingLeft: 20, paddingRight: 20 }}>
-          <Button.ButtonRound
-            Icon={Images.SmallBlueButton}
-            size={70}
-            onPress={() => console.log('Press button row #1')}
-          />
-          <Button.ButtonRound
-            Icon={Images.ButtonBell}
-            size={70}
-            onPress={() => console.log('Press button row #2')}
-          />
-          <Button.ButtonRound
-            Icon={Images.SmallRedButton}
-            size={70}
-            onPress={() => console.log('Press button row #3')}
-          />
-          <Button.ButtonRound
-            Icon={Images.ButtonPower}
-            size={70}
-            onPress={() => console.log('Press button row #4')}
-          />
-        </Row> */}
-
-      {/* <Position.Footer>
-        <Button.ButtonRound
-          Icon={Images.ButtonUp}
-          size={70}
-          onPress={() => console.log('Press button up')}
-        />
-      </Position.Footer> */}
     </MainBackgroundImage>
   );
 };

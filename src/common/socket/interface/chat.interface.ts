@@ -76,6 +76,7 @@ export interface ServerToClientEvents {
   chat: (e: MessageFromDB) => void;
   message: (e: MessageFromWS) => void;
   joined: (e: { newUser: string }) => void;
+  rooms: (newRoom: Room) => void; 
 }
 
 export interface ClientToServerEvents {
