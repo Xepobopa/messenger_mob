@@ -11,6 +11,7 @@ import { Loading } from '@components/common/Loading/Loading';
 import { EncryptedStorageService } from '@common/storage/encryptedStorage';
 import { useAuth } from '@common/hooks/useAuth';
 import { ETab } from '@navigation/tabs';
+import socket from '../../../common/socket/connection';
 
 export const Authorization = () => {
   const { setUserData, setIsAuthed } = useAuth();
@@ -41,6 +42,10 @@ export const Authorization = () => {
           // save all data
           EncryptedStorageService.setToken(res.data.tokens.accessToken);
           console.log('AccessToken:', res.data.tokens.accessToken);
+
+          console.log(res.data.user)
+          socket.emit('onSuccesfulLogin', res.data.user);
+          console.log('---------------------------------------------------------------------')
 
           setUserData(res.data.user);
           setIsAuthed(true);

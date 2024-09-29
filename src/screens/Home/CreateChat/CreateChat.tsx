@@ -81,7 +81,6 @@ export const CreateChat = () => {
     Service.ChatService.postCreateRoom(formData)
       .then((res) => {
         console.log(res.data);
-        dispatch(userSliceActions.pushChat(res.data)); // Update the chat list
         Alert.alert(`Chat ${chatName} created successfully`);
       })
       .catch((e) => {

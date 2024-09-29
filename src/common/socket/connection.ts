@@ -5,11 +5,11 @@ import {
 } from './interface/chat.interface';
 
 const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
-  'https://messengerbackendweb-production.up.railway.app',
+  'http://10.0.2.2:3002/chat',
   {
     transports: ['websocket', 'polling'],
     reconnection: true,
-  }
+  },
 );
 
 export default socket;

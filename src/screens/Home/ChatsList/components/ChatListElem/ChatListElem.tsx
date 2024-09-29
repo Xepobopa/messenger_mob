@@ -1,41 +1,33 @@
 import React from 'react';
 import { TouchableOpacity, View, Image } from 'react-native';
-import { Button } from '@components/buttons';
-import {
-  ElemDateText,
-  ElemNameText,
-  MainBackgroundImage,
-  NormalText,
-} from './styled';
-import { TChatListElemProps } from './types';
-import { Images } from '@assets/Images.ts';
 import { Row } from '@components/common';
+import { ElemDateText, ElemNameText, NormalText } from './styled';
+import { TChatListElemProps } from './types';
 import { useNavigation } from '@react-navigation/native';
-import { EScreens } from '@navigation/screens';
 import ProfileDefaultIcon from '@assets/icons/ProfileDefault/ProfileDefaultIcon';
 
 export const ChatListElem = ({ chat }: TChatListElemProps) => {
   const navigation = useNavigation<any>();
 
   const handleMoveToChat = () => {
-    navigation.navigate(EScreens.ChatMain, { roomUid: chat.uuid });
+    navigation.navigate('ChatMain', { roomUid: chat.uuid });
   };
 
   return (
     <TouchableOpacity onPress={handleMoveToChat}>
-        <Row
-          style={{
-            height: 75,
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingVertical: 5,
-            paddingHorizontal: 10,
-          }}
+      <Row
+        style={{
+          height: 75,
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingVertical: 5,
+          paddingHorizontal: 10,
+        }}
       >
-        {/* Проверяем наличие аватарки, если её нет, используем SVG по умолчанию */}
-        {chat.avatarUrl ? (
+        {/* Проверяем наличие аватарки, если её нет, используем аватар по умолчанию */}
+        {chat.logo_url ? (
           <Image
-            source={{ uri: chat.avatarUrl }} // URL для аватара чата
+            source={{ uri: chat.logo_url }} // Используем URL аватарки
             style={{
               width: 50,
               height: 50,
@@ -60,47 +52,33 @@ export const ChatListElem = ({ chat }: TChatListElemProps) => {
 
         {/* Название чата и последнее сообщение */}
         <View style={{ flex: 1, marginLeft: 10 }}>
-          <ElemNameText>{chat.name}</ElemNameText>
+          <ElemNameText>{chat.name || 'Без названия'}</ElemNameText>
           <NormalText numberOfLines={1} style={{ color: '#7d8b97' }}>
-            {chat.lastMessage}
+            {chat.lastMessage || 'Нет сообщений'}
           </NormalText>
         </View>
 
-        {/* Время последнего сообщения и количество непрочитанных сообщений */}
+        {/* Время последнего сообщения */}
         <View style={{ alignItems: 'flex-end' }}>
           <ElemDateText>
-            {new Date(chat.updated_at).toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: false,
-            })}
+            {chat.updated_at
+              ? new Date(chat.updated_at).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: false,
+                })
+              : ''}
           </ElemDateText>
-          {chat.unreadedMessages > 0 && (
-            <View
-              style={{
-                backgroundColor: '#007aff',
-                borderRadius: 10,
-                padding: 5,
-                marginTop: 5,
-              }}
-            >
-              <NormalText style={{ color: '#fff' }}>
-                {chat.unreadedMessages}
-              </NormalText>
-            </View>
-          )}
         </View>
       </Row>
+
+      {/* Разделительная линия */}
       <View
         style={{
-
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginLeft: 60,
-              borderBottomWidth: 2,
-              borderBottomColor: '#16202c', // Цвет линии
-              // Линия начинается с конца изображения
-            }}
+          marginLeft: 60,
+          borderBottomWidth: 1,
+          borderBottomColor: '#16202c',
+        }}
       />
     </TouchableOpacity>
   );

@@ -1,3 +1,6 @@
+import { TUser } from "@common/services/auth/types/common";
+import { TAbstract } from "@common/types/abstract";
+
 export interface DatabaseResponse {
   id: number;
   uuid: string;
@@ -60,6 +63,8 @@ export interface FilePayload {
 // ************** ROOM ******************
 // **************************************
 export interface Room extends DatabaseResponse {
+  logo_url?: string;
+  lastMessage: string;
   name: string;
   owner?: User;
   users?: User[];
@@ -76,7 +81,7 @@ export interface ServerToClientEvents {
   chat: (e: MessageFromDB) => void;
   message: (e: MessageFromWS) => void;
   joined: (e: { newUser: string }) => void;
-  rooms: (newRoom: Room) => void; 
+  rooms: (newRooms: Room[]) => void;
 }
 
 export interface ClientToServerEvents {
@@ -84,4 +89,5 @@ export interface ClientToServerEvents {
   message: (e: MessagePayload) => void;
   'join-room': (e: JoinRoomPayload) => void;
   file: (e: FilePayload) => void;
+  onSuccesfulLogin: (e: TUser & TAbstract) => void;
 }

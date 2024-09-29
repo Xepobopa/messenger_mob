@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, KeyboardAvoidingView } from 'react-native';
+import { ActivityIndicator, Alert } from 'react-native';
 import { ActivityIndicatorContainer, MainContainer } from './styles';
 import { TChatMainProps } from './types';
 import {
@@ -59,6 +59,7 @@ export const Chat = ({ route, navigation }: TChatMainProps) => {
 
   useEffect(() => {
     if (!user) return;
+
     // Подключение к комнате в качестве клиента сокета
     socket.emit('join-room', {
       userUid: user?.uuid,
@@ -66,14 +67,22 @@ export const Chat = ({ route, navigation }: TChatMainProps) => {
     });
 
     // Обработчик получения нового сообщения
-    socket.on('message', (message: MessageFromWS) => {
-      setMessages((prevState) => [...prevState, message]);
+    const handleNewMessage = (message: MessageFromWS) => {
+      setMessages((prevState) => {
+        // Проверяем, чтобы не добавлять дубликаты сообщений
+        if (prevState.some((msg) => msg.uuid === message.uuid)) {
+          return prevState;
+        }
+        return [...prevState, message];
+      });
       console.log('New message! => ', message);
-    });
+    };
+
+    socket.on('message', handleNewMessage);
 
     return () => {
       // Отключение обработчиков событий при размонтировании компонента
-      socket.off('message');
+      socket.off('message', handleNewMessage);
     };
   }, [user, route.params.roomUid]);
 
@@ -87,10 +96,10 @@ export const Chat = ({ route, navigation }: TChatMainProps) => {
         message,
       });
 
-      // Добавляем новое сообщение в состояние сразу после успешной отправки
+      // Проверяем, чтобы не добавить дубликаты сообщений
       const newMessage: MessageFromDB = {
-        id: res.data.id, // предполагается, что это возвращаемый ID сообщения
-        uuid: res.data.uuid, // предполагается, что это возвращаемый UUID сообщения
+        id: res.data.id,
+        uuid: res.data.uuid,
         date: new Date().toISOString(),
         from: {
           nickname: user.nickname,
@@ -100,9 +109,12 @@ export const Chat = ({ route, navigation }: TChatMainProps) => {
         message,
       };
 
-      setMessages((prevState) => [...prevState, newMessage]); // Обновляем состояние
-
-      console.log('Message sent and added to state: ', newMessage);
+      setMessages((prevMessages) => {
+        if (prevMessages.some((msg) => msg.uuid === newMessage.uuid)) {
+          return prevMessages;
+        }
+        return [...prevMessages, newMessage];
+      });
     } catch (err) {
       console.error('Failed to send message:', err);
       Alert.alert('Error', 'Failed to send message');
