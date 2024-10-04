@@ -43,3 +43,11 @@ export const SendButton = styled(TouchableOpacity)`
   align-items: center;
   justify-content: center;
 `;
+
+export const FileButton = styled(TouchableOpacity)`
+  height: 40px;
+  width: 40px;
+  padding: 10px;
+  align-items: center;
+  justify-content: center;
+`;
