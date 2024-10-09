@@ -21,14 +21,13 @@ export const Sender = ({ onSend }: TSenderProps) => {
   };
 
   const handleSend = () => {
-    if (text.trim().length > 0 || selectedFile) { // Проверяем, что есть текст или файл
-      onSend({ text, file: selectedFile });
-      setText('');
-      setSelectedFile(null); // Очищаем файл после отправки
-      Keyboard.dismiss();
-    } else {
-      Alert.alert('Введите текст или выберите файл.');
-    }
+    // Проверяем, что есть текст или файл
+    console.log('---------------------------')
+    console.log(selectedFile)
+    onSend({ message: text || ' ', file: selectedFile });
+    setText('');
+    setSelectedFile(null); // Очищаем файл после отправки
+    Keyboard.dismiss();
   };
 
   const handleFilePicker = async () => {

@@ -32,6 +32,7 @@ export interface Message {
   date: Date;
   from: string;
   to: string;
+  fileUrl?: string; 
 }
 export interface MessageFromWS extends DatabaseResponse {
   message: string;
@@ -40,17 +41,20 @@ export interface MessageFromWS extends DatabaseResponse {
   to: Room;
   from: User;
   date: string;
+  fileUrl?: string;
 }
 export interface MessageFromDB extends DatabaseResponse {
   message: string;
   date: string;
   from: User;
+  fileUrl?: string;
 }
 
 export interface MessagePayload {
   message: string;
   fromUid: string;
   toRoomUid: string;
+  file?: File;
 }
 
 export interface FilePayload {

@@ -2,8 +2,7 @@ import { apiFormData, apiPrivate } from '../../api';
 import { TGetMessages } from './types/getMessages';
 import { TGetRoomInfo } from './types/getRoomInfo';
 import { TPostCreateRoom } from './types/postCreateRoom';
-import { TPostSendMessageRequest } from './types/postSendMessage';
- 
+import { TPostSendMessageRequest, TPayload } from './types/postSendMessage';
 
 export class ChatService {
   static async postCreateRoom(
@@ -15,7 +14,7 @@ export class ChatService {
       },
     });
   }
-  
+
   static async getRoomInfo(
     data: TGetRoomInfo['payload']
   ): Promise<TGetRoomInfo['response']> {
@@ -29,8 +28,29 @@ export class ChatService {
   }
 
   static async sendMessage(
-    data: TPostSendMessageRequest['payload']
+    data: FormData
   ): Promise<TPostSendMessageRequest['response']> {
-    return apiPrivate.post(`/chat/message`, data);
+    console.log('Parsed FormData:');
+    
+    // Логируем данные через доступ к _parts (React Native-specific)
+    if (data._parts) {
+      data._parts.forEach(([key, value]) => {
+        if (value && typeof value === 'object' && value.uri) {
+          console.log(
+            `Файл: ${value.name}, URI: ${value.uri}, Тип: ${value.type}`
+          );
+        } else {
+          console.log(`Ключ: ${key}, Значение: ${value}`);
+        }
+      });
+    }
+  
+    // Отправляем запрос через axios
+    return apiFormData.post('/chat/message', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      timeout: 10000,
+    });
   }
 }
