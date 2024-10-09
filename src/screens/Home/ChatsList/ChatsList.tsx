@@ -4,86 +4,124 @@ import { Button } from '@components/buttons';
 import { Position } from '@components/positions';
 import { ETab } from '@navigation/tabs';
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Text, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import {
+  ActivityIndicator,
+  Text,
+  TouchableOpacity,
+  RefreshControl,
+  ScrollView,
+  View,
+} from 'react-native';
 import { useUserData } from '../../../store/tools';
 import { ChatsList as ChatsListComponent } from './components/ChatsList';
 import { LoadingChatsContainer, MainBackgroundImage } from './styled';
 import { Row } from '@components/common';
 import { useLoad } from '@common/hooks/useLoad';
+import RoundButton from '@components/telegramStaff/RoundButton/RoundButton';
+import MenuIcon from '@assets/icons/Menu/MenuIcon';
+import PencilIcon from '@assets/icons/Pencil/PencilIcon';
+import useSocketEvents from '@common/hooks/useSocketEvents/useSocketEvents';
 
 export const ChatsList = () => {
-    const { clearToken, clearUserData } = useAuth();
-    const navigation = useNavigation<any>();
-    const { loadUserAndChats } = useLoad();
-    const { chats } = useUserData();
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+  useSocketEvents(); // Use the custom hook to listen to socket events
 
-    useEffect(() => {
-        loadUserAndChats().then(() => console.log('user and chats loaded')).finally(() => setIsLoading(false));
-    }, []);
+  const { clearToken, clearUserData } = useAuth();
+  const navigation = useNavigation<any>();
+  const { loadUserAndChats } = useLoad();
+  const { chats } = useUserData();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
-    // TODO: Remove it
-    const handleLogIn = () => {
-        navigation.navigate(ETab.Auth);
+  // Initial loading effect - only runs once when component is mounted
+  useEffect(() => {
+    const loadData = async () => {
+      if (!isLoading) return; // Prevent multiple loading
+      try {
+        await loadUserAndChats();
+        console.log('user and chats loaded');
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    const handleCreateChat = () => {
-        navigation.navigate('ChatsStack', { screen: 'CreateChat' });
-    };
+    loadData();
+  }, [isLoading, loadUserAndChats]);
 
-    return (
-        <MainBackgroundImage source={Images.ScreenBackground}>
-            <Position.Main style={{ justifyContent: 'space-around' }}>
-                <Button.ButtonRound
-                    Icon={Images.ArrowBack}
-                    size={35}
-                    onPress={handleLogIn}
-                />
+  const refreshChats = useCallback(() => {
+    if (isRefreshing) return;
+    setIsRefreshing(true);
+    loadUserAndChats()
+      .then(() => console.log('user and chats refreshed'))
+      .finally(() => setIsRefreshing(false));
+  }, [isRefreshing, loadUserAndChats]);
 
-                {isLoading ? (
-                        <LoadingChatsContainer>
-                            <ActivityIndicator size={'large'} color={'#fff'} />
-                        </LoadingChatsContainer>
-                    ) : ( 
-                        <ChatsListComponent data={chats} />
-                    )}
+  const handleLogIn = () => {
+    navigation.navigate(ETab.Auth);
+  };
 
-                <TouchableOpacity onPress={handleCreateChat}>
-                    <Text style={{ color: 'white' }}>Create chat</Text>
-                </TouchableOpacity>
+  const handleCreateChat = () => {
+    navigation.navigate('ChatsStack', { screen: 'CreateChat' });
+  };
 
-                <Row style={{ paddingLeft: 20, paddingRight: 20 }}>
-                    <Button.ButtonRound
-                        Icon={Images.SmallBlueButton}
-                        size={70}
-                        onPress={() => console.log('Press button row #1')}
-                    />
-                    <Button.ButtonRound
-                        Icon={Images.ButtonBell}
-                        size={70}
-                        onPress={() => console.log('Press button row #2')}
-                    />
-                    <Button.ButtonRound
-                        Icon={Images.SmallRedButton}
-                        size={70}
-                        onPress={() => console.log('Press button row #3')}
-                    />
-                    <Button.ButtonRound
-                        Icon={Images.ButtonPower}
-                        size={70}
-                        onPress={() => console.log('Press button row #4')}
-                    />
-                </Row>
-            </Position.Main>
+  return (
+    <MainBackgroundImage>
+      
+      <Row
+        style={{
+          alignItems: 'center',
+          height: 50,
+          backgroundColor: '#222e3e',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 50 },
+          shadowOpacity: 0.25,
+          shadowRadius: 5.84,
+        }}
+      >
+        <TouchableOpacity onPress={handleLogIn} style={{ marginLeft: 20 }}>
+          <MenuIcon />
+        </TouchableOpacity>
+        <Text
+          style={{
+            flex: 1,
+            color: 'white',
+            fontWeight: 'bold',
+            fontSize: 20,
+            textAlign: 'center',
+          }}
+        >
+          Сообщения
+        </Text>
+        <View style={{ width: 35 }} />
+      </Row>
 
-            <Position.Footer>
-                <Button.ButtonRound
-                    Icon={Images.ButtonUp}
-                    size={70}
-                    onPress={() => console.log('Press button up')}
-                />
-            </Position.Footer>
-        </MainBackgroundImage>
-    );
+      {isLoading ? (
+        <LoadingChatsContainer>
+          <ActivityIndicator size={'large'} color={'#fff'} />
+        </LoadingChatsContainer>
+      ) : (
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={refreshChats}
+            />
+          }
+          contentContainerStyle={{ flexGrow: 1 }}
+        >
+          <ChatsListComponent data={chats} />
+        </ScrollView>
+      )}
+
+      <View style={{ position: 'absolute', bottom: 20, right: 20, zIndex: 10 }}>
+        <RoundButton
+          Icon={PencilIcon}
+          size={50}
+          onPress={handleCreateChat}
+          backgroundColor="#639fd8"
+          iconColor="#ffffff"
+        />
+      </View>
+    </MainBackgroundImage>
+  );
 };

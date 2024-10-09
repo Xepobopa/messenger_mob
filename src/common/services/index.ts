@@ -3,9 +3,9 @@ import { ChatService } from './chat';
 import { UserService } from './user';
 
 export const Service = {
-    AuthService,
-    UserService,
-    ChatService
+  AuthService,
+  UserService,
+  ChatService,
 };
 
 export * from './types';

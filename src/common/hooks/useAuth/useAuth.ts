@@ -6,61 +6,69 @@ import { EncryptedStorageService } from '@common/storage/encryptedStorage';
 import { Room } from '@common/socket/interface/chat.interface';
 
 export const useAuth = () => {
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-    const setToken = async (token: string) => {
-        EncryptedStorageService.setToken(token);
-        console.log(`token saved successful!`);
-    };
+  const setToken = async (token: string) => {
+    EncryptedStorageService.setToken(token);
+    console.log(`token saved successful!`);
+  };
 
-    const getToken = async () => {
-        try {
-            const token = await EncryptedStorageService.getToken();
-            if (!token) {
-                return null;
-            }
+  const getToken = async () => {
+    try {
+      const token = await EncryptedStorageService.getToken();
+      if (!token) {
+        return null;
+      }
 
-            return token;
-        } catch (error) {
-            console.log('[ERROR] Failed to retrieve the token. ', error);
-        }
-    };
+      return token;
+    } catch (error) {
+      console.log('[ERROR] Failed to retrieve the token. ', error);
+    }
+  };
 
-    const clearToken = async () => {
-        try {
-            console.log('Token deleted');
-            return await EncryptedStorageService.setToken('');
-        } catch (error) {
-            console.error(
-                'Error deleting credentials for service Token',
-                error,
-            );
-        }
-    };
+  const clearToken = async () => {
+    try {
+      console.log('Token deleted');
+      return await EncryptedStorageService.setToken('');
+    } catch (error) {
+      console.error('Error deleting credentials for service Token', error);
+    }
+  };
 
-    const setUserData = useCallback(
-        (user: TUser) => {
-            dispatch(userSliceActions.setUser(user));
-        },
-        [dispatch],
-    );
+  const setUserData = useCallback(
+    (user: TUser) => {
+      dispatch(userSliceActions.setUser(user));
+    },
+    [dispatch]
+  );
 
-    const setChats = useCallback(
-        (chats: Array<Room>) => {
-            if (chats === undefined) chats = [];
-            dispatch(userSliceActions.setChats(chats));
-        },
-        [dispatch],
-    );
+  const setChats = useCallback(
+    (chats: Array<Room>) => {
+      if (chats === undefined) chats = [];
+      dispatch(userSliceActions.setChats(chats));
+    },
+    [dispatch]
+  );
 
-    const clearUserData = useCallback(() => {
-        console.log('User data deleted');
-        dispatch(userSliceActions.clearUser());
-    }, [dispatch]);
+  const clearUserData = useCallback(() => {
+    console.log('User data deleted');
+    dispatch(userSliceActions.clearUser());
+  }, [dispatch]);
 
-    const setIsAuthed = useCallback((state: boolean) => {
-        dispatch(userSliceActions.setIsAuthed(state));
-    }, [dispatch]);
+  const setIsAuthed = useCallback(
+    (state: boolean) => {
+      dispatch(userSliceActions.setIsAuthed(state));
+    },
+    [dispatch]
+  );
 
-    return { setUserData, clearUserData, setToken, getToken, clearToken, setIsAuthed, setChats };
+  return {
+    setUserData,
+    clearUserData,
+    setToken,
+    getToken,
+    clearToken,
+    setIsAuthed,
+    setChats,
+  };
 };
